@@ -4,7 +4,7 @@ import { HttpError } from "http-errors";
 
 const app = express();
 app.get("/", (req, res, next: NextFunction) => {
-  res.status(200).send("Hello World!");
+  res.status(200).send("Hello Worlda!");
   next();
 });
 
