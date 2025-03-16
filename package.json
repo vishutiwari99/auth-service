@@ -9,7 +9,7 @@
     "format:check": "prettier . --check",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "jest",
+    "test": "jest --watch --runInBand",
     "prepare": "husky"
   },
   "author": "Vaibhav Tiwari <vishutiwari99@gmail.com>",
@@ -41,6 +41,9 @@
     "express": "^4.21.2",
     "http-errors": "^2.0.0",
     "lint-staged": "^15.5.0",
+    "pg": "^8.14.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.21",
     "winston": "^3.17.0"
   },
   "lint-staged": {
