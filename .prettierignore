@@ -2,3 +2,6 @@
 build
 coverage
 dist
+tsconfig.json
+package-lock.json
+package.json
