@@ -38,7 +38,9 @@
     "typescript-eslint": "^8.26.1"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/supertest": "^6.0.2",
+    "bcrypt": "^5.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^8.0.0",
