@@ -127,6 +127,20 @@ describe("POST /auth/register", () => {
     });
   });
   describe("Fields are missing", () => {
+    it('should return "400 Bad Request" if "email" is missing', async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "",
+        password: "password123",
+      };
+      const response = await request(app).post("/auth/register").send(userData);
+      expect(response.statusCode).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+
     // it("should register a new user", () => {});
   });
 });
