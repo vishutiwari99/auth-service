@@ -140,7 +140,60 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
     });
+    it("Should return 400 status code if firstName is missing.", async () => {
+      const userData = {
+        firstName: "",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        password: "password123",
+      };
+      const response = await request(app).post("/auth/register").send(userData);
+      expect(response.statusCode).toBe(400);
+    });
+    it("Should return 400 status code if lastName is missing.", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "",
+        email: "johndoe@example.com",
+        password: "password123",
+      };
+      const response = await request(app).post("/auth/register").send(userData);
+      expect(response.statusCode).toBe(400);
+    });
+    it("Should return 400 status code if password is missing.", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        password: "",
+      };
+      const response = await request(app).post("/auth/register").send(userData);
+      expect(response.statusCode).toBe(400);
+    });
+    it("Should return 400 status code if email is not a valid email.", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoeexample.com",
+        password: "V@123tiwari",
+      };
+      const response = await request(app).post("/auth/register").send(userData);
+      expect(response.statusCode).toBe(400);
+    });
+  });
 
-    // it("should register a new user", () => {});
+  describe("Fields are not in proper format", () => {
+    it("should trim the email field", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: " johndoe@example.com ",
+        password: "password123",
+      };
+      await request(app).post("/auth/register").send(userData);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users[0].email).toBe("johndoe@example.com");
+    });
   });
 });
