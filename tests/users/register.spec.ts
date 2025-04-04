@@ -5,6 +5,7 @@ import { AppDataSource } from "../../src/config/data-source";
 import { User } from "../../src/entity/User";
 import { Roles } from "../../src/contants";
 import { isJWT } from "../utils";
+import { RefreshToken } from "../../src/entity/RefreshToken";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -159,75 +160,106 @@ describe("POST /auth/register", () => {
       expect(isJWT(accessToken)).toBeTruthy();
       expect(isJWT(refreshToken)).toBeTruthy();
     });
-  });
-  describe("Fields are missing", () => {
-    it('should return "400 Bad Request" if "email" is missing', async () => {
-      const userData = {
-        firstName: "John",
-        lastName: "Doe",
-        email: "",
-        password: "password123",
-      };
-      const response = await request(app).post("/auth/register").send(userData);
-      expect(response.statusCode).toBe(400);
-      const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
-      expect(users).toHaveLength(0);
-    });
-    it("Should return 400 status code if firstName is missing.", async () => {
-      const userData = {
-        firstName: "",
-        lastName: "Doe",
-        email: "johndoe@example.com",
-        password: "password123",
-      };
-      const response = await request(app).post("/auth/register").send(userData);
-      expect(response.statusCode).toBe(400);
-    });
-    it("Should return 400 status code if lastName is missing.", async () => {
-      const userData = {
-        firstName: "John",
-        lastName: "",
-        email: "johndoe@example.com",
-        password: "password123",
-      };
-      const response = await request(app).post("/auth/register").send(userData);
-      expect(response.statusCode).toBe(400);
-    });
-    it("Should return 400 status code if password is missing.", async () => {
-      const userData = {
-        firstName: "John",
-        lastName: "Doe",
-        email: "johndoe@example.com",
-        password: "",
-      };
-      const response = await request(app).post("/auth/register").send(userData);
-      expect(response.statusCode).toBe(400);
-    });
-    it("Should return 400 status code if email is not a valid email.", async () => {
-      const userData = {
-        firstName: "John",
-        lastName: "Doe",
-        email: "johndoeexample.com",
-        password: "V@123tiwari",
-      };
-      const response = await request(app).post("/auth/register").send(userData);
-      expect(response.statusCode).toBe(400);
-    });
-  });
 
-  describe("Fields are not in proper format", () => {
-    it("should trim the email field", async () => {
+    it("should store the refresh token in the database", async () => {
       const userData = {
         firstName: "John",
         lastName: "Doe",
-        email: " johndoe@example.com ",
+        email: "johndoe@example.com",
         password: "password123",
       };
-      await request(app).post("/auth/register").send(userData);
-      const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
-      expect(users[0].email).toBe("johndoe@example.com");
+      // Act
+
+      const response = await request(app).post("/auth/register").send(userData);
+      // Assert
+      const refreshTokenRepo = connection.getRepository(RefreshToken);
+      const tokens = await refreshTokenRepo
+        .createQueryBuilder("refreshToken")
+        .where("refreshToken.userId = :userId", {
+          userId: (response.body as Record<string, string>).id,
+        })
+        .getMany();
+      expect(tokens).toHaveLength(1);
+    });
+    describe("Fields are missing", () => {
+      it('should return "400 Bad Request" if "email" is missing', async () => {
+        const userData = {
+          firstName: "John",
+          lastName: "Doe",
+          email: "",
+          password: "password123",
+        };
+        const response = await request(app)
+          .post("/auth/register")
+          .send(userData);
+        expect(response.statusCode).toBe(400);
+        const userRepository = connection.getRepository(User);
+        const users = await userRepository.find();
+        expect(users).toHaveLength(0);
+      });
+      it("Should return 400 status code if firstName is missing.", async () => {
+        const userData = {
+          firstName: "",
+          lastName: "Doe",
+          email: "johndoe@example.com",
+          password: "password123",
+        };
+        const response = await request(app)
+          .post("/auth/register")
+          .send(userData);
+        expect(response.statusCode).toBe(400);
+      });
+      it("Should return 400 status code if lastName is missing.", async () => {
+        const userData = {
+          firstName: "John",
+          lastName: "",
+          email: "johndoe@example.com",
+          password: "password123",
+        };
+        const response = await request(app)
+          .post("/auth/register")
+          .send(userData);
+        expect(response.statusCode).toBe(400);
+      });
+      it("Should return 400 status code if password is missing.", async () => {
+        const userData = {
+          firstName: "John",
+          lastName: "Doe",
+          email: "johndoe@example.com",
+          password: "",
+        };
+        const response = await request(app)
+          .post("/auth/register")
+          .send(userData);
+        expect(response.statusCode).toBe(400);
+      });
+      it("Should return 400 status code if email is not a valid email.", async () => {
+        const userData = {
+          firstName: "John",
+          lastName: "Doe",
+          email: "johndoeexample.com",
+          password: "V@123tiwari",
+        };
+        const response = await request(app)
+          .post("/auth/register")
+          .send(userData);
+        expect(response.statusCode).toBe(400);
+      });
+    });
+
+    describe("Fields are not in proper format", () => {
+      it("should trim the email field", async () => {
+        const userData = {
+          firstName: "John",
+          lastName: "Doe",
+          email: " johndoe@example.com ",
+          password: "password123",
+        };
+        await request(app).post("/auth/register").send(userData);
+        const userRepository = connection.getRepository(User);
+        const users = await userRepository.find();
+        expect(users[0].email).toBe("johndoe@example.com");
+      });
     });
   });
 });
