@@ -1,6 +1,6 @@
 import { checkSchema } from "express-validator";
 
-export default checkSchema({
+export const userValidationSchema = checkSchema({
   firstName: {
     errorMessage: "First name is required",
     notEmpty: true,
@@ -15,9 +15,7 @@ export default checkSchema({
     errorMessage: "Email is required",
     notEmpty: true,
     trim: true,
-    isEmail: {
-      errorMessage: "Invalid email format",
-    },
+    isEmail: true,
   },
   password: {
     isLength: {
