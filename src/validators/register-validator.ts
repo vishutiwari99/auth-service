@@ -1,6 +1,6 @@
 import { checkSchema } from "express-validator";
 
-export const userValidationSchema = checkSchema({
+export const userRegistrationValidationSchema = checkSchema({
   firstName: {
     errorMessage: "First name is required",
     notEmpty: true,
