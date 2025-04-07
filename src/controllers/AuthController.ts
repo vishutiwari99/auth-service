@@ -96,7 +96,7 @@ export class AuthController {
         user.password,
       );
       if (!passwordMatch) {
-        const error = createHttpError(400, "Invalid email or password");
+        const error = createHttpError(401, "Invalid email or password");
         next(error);
         return;
       }
