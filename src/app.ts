@@ -2,9 +2,11 @@ import express, { NextFunction, Request, Response } from "express";
 import logger from "./config/logger";
 import { HttpError } from "http-errors";
 import authRouter from "./routes/auth";
+import cookieParser from "cookie-parser";
 import "reflect-metadata";
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res, next: NextFunction) => {
   res.status(200).send("Hello Worlda!");
