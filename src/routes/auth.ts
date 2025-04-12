@@ -11,6 +11,7 @@ import { userLoginValidationSchema } from "../validators/login-validator";
 import { CredentialService } from "../services/CredentialService";
 import authenticate from "../middlewares/authenticate";
 import { AuthRequest } from "../types";
+import validateRefreshToken from "../middlewares/validateRefreshToken";
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -55,6 +56,18 @@ router.get(
   (req: Request, res: Response, next: NextFunction) => {
     try {
       void authController.self(req as AuthRequest, res);
+      // Ensure no value is returned here, just continue execution
+    } catch (error) {
+      next(error); // Pass the error to the next error handler
+    }
+  },
+);
+router.post(
+  "/refresh",
+  validateRefreshToken,
+  (req: Request, res: Response, next: NextFunction) => {
+    try {
+      void authController.refresh(req as AuthRequest, res, next);
       // Ensure no value is returned here, just continue execution
     } catch (error) {
       next(error); // Pass the error to the next error handler
