@@ -31,6 +31,17 @@ describe("POST /auth/self", () => {
 
   describe("Given all required fields are provided", () => {
     it("should return status code 200 ", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        password: "password123",
+      };
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({
+        ...userData,
+        role: Roles.CUSTOMER,
+      });
       const accessToken = jwks.token({ sub: "1", role: Roles.CUSTOMER });
 
       const response = await request(app)

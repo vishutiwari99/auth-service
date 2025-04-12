@@ -55,7 +55,7 @@ router.get(
   authenticate,
   (req: Request, res: Response, next: NextFunction) => {
     try {
-      void authController.self(req as AuthRequest, res);
+      void authController.self(req as AuthRequest, res, next);
       // Ensure no value is returned here, just continue execution
     } catch (error) {
       next(error); // Pass the error to the next error handler
