@@ -150,6 +150,24 @@ export class AuthController {
     }
   }
 
+  async logout(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const user = await this.userService.findById(req.auth.sub);
+      if (!user) {
+        const error = createHttpError(400, "User with token not found");
+        next(error);
+        return;
+      }
+      await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+      this.logger.info(`User ${user.id} logged out successfully`);
+      res.clearCookie("accessToken").clearCookie("refreshToken");
+      res.status(204).end();
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
   private async setAuthCookies(res: Response, user: User) {
     const payload: JwtPayload = {
       sub: String(user.id),
