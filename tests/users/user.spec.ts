@@ -85,6 +85,24 @@ describe("POST /auth/self", () => {
         "password",
       );
     });
+    it("should  return 401 if token doesn't exist   ", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        password: "password123",
+      };
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({
+        ...userData,
+        role: Roles.CUSTOMER,
+      });
+      //   generate token
+
+      const response = await request(app).get("/auth/self").send();
+
+      expect(response.statusCode).toBe(401);
+    });
   });
   describe("Missing Fields", () => {
     it("should return status code 400 and error message", async () => {
