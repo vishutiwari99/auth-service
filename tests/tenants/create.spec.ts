@@ -6,6 +6,7 @@ import app from "../../src/app";
 import { Tenant } from "../../src/entity/Tenant";
 import { Roles } from "../../src/contants";
 import { createJWKSMock } from "mock-jwks";
+import { ITenant } from "../../src/types";
 
 describe("POST /tenants", () => {
   let connection: DataSource;
@@ -27,6 +28,45 @@ describe("POST /tenants", () => {
 
   afterEach(() => {
     jwks.stop();
+  });
+
+  it("should return 400 when we try to create a tenant without a name", async () => {
+    const tenentData = {
+      address: "Test Address",
+    };
+    adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+
+    const response = await request(app)
+      .post("/tenants")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(tenentData);
+    expect(response.statusCode).toBe(400);
+  });
+  it("should return 400 when we try to create a tenant without a address", async () => {
+    const tenentData = {
+      name: "Test Tenant",
+    };
+    adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+
+    const response = await request(app)
+      .post("/tenants")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(tenentData);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 when we try to create a tenant with number as name", async () => {
+    const tenentData = {
+      name: 123,
+      address: "Test Address",
+    };
+    adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+
+    const response = await request(app)
+      .post("/tenants")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(tenentData);
+    expect(response.statusCode).toBe(400);
   });
 
   it("should return 201 and create a new tenant", async () => {
@@ -89,5 +129,23 @@ describe("POST /tenants", () => {
     const tenantRepository = connection.getRepository(Tenant);
     const tenants = await tenantRepository.find();
     expect(tenants).toHaveLength(0);
+  });
+
+  it("should return all tenants", async () => {
+    const mockTenants: ITenant[] = [
+      { name: "Tenant 1", address: "Address 1" },
+      { name: "Tenant 2", address: "Address 2" },
+    ];
+    adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+    const tenantRepository = connection.getRepository(Tenant);
+    await tenantRepository.save(mockTenants);
+    const response = await request(app)
+      .get("/tenants")
+      .set("Cookie", [`accessToken=${adminToken}`]);
+    expect(response.body).toHaveLength(2);
+    expect(response.statusCode).toBe(200);
+
+    const tenants = await tenantRepository.find();
+    expect(tenants).toHaveLength(2);
   });
 });
