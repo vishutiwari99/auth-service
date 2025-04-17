@@ -30,6 +30,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
 
       // Act
@@ -44,6 +46,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
 
       // Act
@@ -58,6 +62,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
 
       await request(app).post("/auth/register").send(userData);
@@ -75,6 +81,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
 
       await request(app).post("/auth/register").send(userData);
@@ -89,6 +97,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
 
       await request(app).post("/auth/register").send(userData);
@@ -103,11 +113,13 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
 
       await request(app).post("/auth/register").send(userData);
       const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
+      const users = await userRepository.find({ select: ["password"] });
       expect(users[0].password).not.toBe(userData.password);
       expect(users[0].password).toHaveLength(60);
       expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
@@ -119,6 +131,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
       const userRepository = connection.getRepository(User);
       await userRepository.save({ ...userData, role: Roles.CUSTOMER });
@@ -134,6 +148,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
       // Act
 
@@ -167,6 +183,8 @@ describe("POST /auth/register", () => {
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.CUSTOMER,
+        tenantId: 1,
       };
       // Act
 
@@ -188,6 +206,8 @@ describe("POST /auth/register", () => {
           lastName: "Doe",
           email: "",
           password: "password123",
+          role: Roles.CUSTOMER,
+          tenantId: 1,
         };
         const response = await request(app)
           .post("/auth/register")
@@ -203,6 +223,8 @@ describe("POST /auth/register", () => {
           lastName: "Doe",
           email: "johndoe@example.com",
           password: "password123",
+          role: Roles.CUSTOMER,
+          tenantId: 1,
         };
         const response = await request(app)
           .post("/auth/register")
@@ -215,6 +237,8 @@ describe("POST /auth/register", () => {
           lastName: "",
           email: "johndoe@example.com",
           password: "password123",
+          role: Roles.CUSTOMER,
+          tenantId: 1,
         };
         const response = await request(app)
           .post("/auth/register")
@@ -227,6 +251,8 @@ describe("POST /auth/register", () => {
           lastName: "Doe",
           email: "johndoe@example.com",
           password: "",
+          role: Roles.CUSTOMER,
+          tenantId: 1,
         };
         const response = await request(app)
           .post("/auth/register")
@@ -239,6 +265,8 @@ describe("POST /auth/register", () => {
           lastName: "Doe",
           email: "johndoeexample.com",
           password: "V@123tiwari",
+          role: Roles.CUSTOMER,
+          tenantId: 1,
         };
         const response = await request(app)
           .post("/auth/register")
@@ -254,6 +282,8 @@ describe("POST /auth/register", () => {
           lastName: "Doe",
           email: " johndoe@example.com ",
           password: "password123",
+          role: Roles.CUSTOMER,
+          tenantId: 1,
         };
         await request(app).post("/auth/register").send(userData);
         const userRepository = connection.getRepository(User);

@@ -9,7 +9,7 @@
     "format:check": "prettier . --check",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "jest --watch --runInBand",
+    "test": "jest --watch --runInBand --detectOpenHandles",
     "prepare": "husky",
     "start": "ts-node src/index.ts",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate",

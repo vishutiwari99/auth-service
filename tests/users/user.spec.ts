@@ -103,6 +103,7 @@ describe("POST /auth/self", () => {
         email: "johndoe@example.com",
         password: "password123",
       };
+
       const userRepository = connection.getRepository(User);
       await userRepository.save({
         ...userData,
@@ -113,6 +114,31 @@ describe("POST /auth/self", () => {
       const response = await request(app).get("/auth/self").send();
 
       expect(response.statusCode).toBe(401);
+    });
+
+    it("should return all users list ", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        password: "password123",
+      };
+      const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({
+        ...userData,
+        role: Roles.ADMIN,
+      });
+      //   generate token
+
+      const response = await request(app)
+        .get("/users")
+        .set("Cookie", [`accessToken=${adminToken};`])
+        .send();
+      expect(response.body).toHaveLength(1);
+
+      expect(response.statusCode).toBe(200);
     });
   });
   describe("Missing Fields", () => {

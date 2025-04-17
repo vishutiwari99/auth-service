@@ -23,4 +23,14 @@ export const userRegistrationValidationSchema = checkSchema({
       errorMessage: "Password should be at least 8 chars",
     },
   },
+
+  tenantId: {
+    errorMessage: "Tenant ID is required",
+    notEmpty: true,
+    trim: true,
+  },
+  role: {
+    errorMessage: "Role is required",
+    notEmpty: true,
+  },
 });

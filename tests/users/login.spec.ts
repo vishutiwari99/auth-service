@@ -3,6 +3,7 @@ import request from "supertest";
 import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import app from "../../src/app";
+import { Roles } from "../../src/contants";
 
 describe("POST /users/login", () => {
   let connection: DataSource;
@@ -19,6 +20,8 @@ describe("POST /users/login", () => {
       lastName: "Doe",
       email: "johndoe@example.com",
       password: "password123",
+      role: Roles.CUSTOMER,
+      tenantId: 1,
     };
 
     // Act

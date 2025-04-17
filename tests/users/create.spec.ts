@@ -6,6 +6,8 @@ import app from "../../src/app";
 import { createJWKSMock } from "mock-jwks";
 import { Roles } from "../../src/contants";
 import { User } from "../../src/entity/User";
+import { Tenant } from "../../src/entity/Tenant";
+import { createTenant } from "../utils";
 describe("POST /users", () => {
   let connection: DataSource;
   let jwks: ReturnType<typeof createJWKSMock>;
@@ -32,13 +34,15 @@ describe("POST /users", () => {
   describe("Given all required fields are provided", () => {
     it("should persist the user and return a 201 status code", async () => {
       const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+      const tenant = await createTenant(connection.getRepository(Tenant));
 
       const userData = {
         firstName: "John",
         lastName: "Doe",
         email: "johndoe@example.com",
         password: "password123",
-        tenantId: 1,
+        tenantId: tenant.id,
+        role: Roles.MANAGER,
       };
 
       //   generate token
@@ -61,20 +65,60 @@ describe("POST /users", () => {
         email: "johndoe@example.com",
         password: "password123",
         tenantId: 1,
+        role: Roles.MANAGER,
       };
 
       //   generate token
 
-      await request(app)
+      const response = await request(app)
         .post("/users")
         .set("Cookie", [`accessToken=${adminToken}`])
         .send(userData);
+      expect(response.status).toBe(201);
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
       expect(users).toHaveLength(1);
       expect(users[0].role).toBe(Roles.MANAGER);
     });
 
-    it.todo("should return 403 if non admin tries to create a user");
+    it("should return 400 if email is empty or invalid", async () => {
+      const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoeexamplecom",
+        password: "password123",
+        tenantId: 1,
+      };
+
+      //   generate token
+
+      const response = await request(app)
+        .post("/users")
+        .set("Cookie", [`accessToken=${adminToken}`])
+        .send(userData);
+      expect(response.status).toBe(400);
+    });
+
+    it("should return 403 if non admin tries to create a user", async () => {
+      const adminToken = jwks.token({ sub: "1", role: Roles.MANAGER });
+
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoeexamplecom",
+        password: "password123",
+        tenantId: 1,
+      };
+
+      //   generate token
+
+      const response = await request(app)
+        .post("/users")
+        .set("Cookie", [`accessToken=${adminToken}`])
+        .send(userData);
+      expect(response.status).toBe(403);
+    });
   });
 });

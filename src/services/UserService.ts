@@ -33,14 +33,32 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string) {
+  async findByEmailWithPassword(email: string) {
     return await this.userRepository.findOne({
       where: { email },
+      select: ["id", "firstName", "lastName", "email", "password", "role"],
     });
   }
   async findById(id: number) {
     return await this.userRepository.findOne({
       where: { id },
     });
+  }
+
+  async findAll() {
+    return await this.userRepository.find();
+  }
+
+  async findAndUpdate(id: number, data: UserData) {
+    return this.userRepository.update(id, data);
+  }
+
+  async findAndDelete(id: number) {
+    const user = await this.findById(id);
+    if (!user) {
+      const error = createHttpError(404, "User not found");
+      throw error;
+    }
+    return await this.userRepository.delete(id);
   }
 }
