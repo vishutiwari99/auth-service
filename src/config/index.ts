@@ -6,25 +6,17 @@ config({
 const {
   PORT,
   NODE_ENV,
-  DB_HOST,
-  DB_PORT,
-  DB_NAME,
-  DB_USER_NAME,
-  DB_PASSWORD,
   REFRESH_TOKEN_SECRET,
   JWKS_URI,
   PRIVATE_KEY,
+  DATABASE_URL,
 } = process.env;
 
 export const Config = {
   PORT,
   NODE_ENV,
-  DB_HOST,
-  DB_PORT,
-  DB_NAME,
-  DB_USER_NAME,
-  DB_PASSWORD,
   REFRESH_TOKEN_SECRET,
   JWKS_URI,
   PRIVATE_KEY,
+  DATABASE_URL,
 };
