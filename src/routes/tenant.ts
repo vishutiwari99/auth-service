@@ -25,14 +25,9 @@ router.post(
     await tenantController.create(req, res, next);
   },
 );
-router.get(
-  "/",
-  authenticate,
-  canAccess([Roles.ADMIN]),
-  async (req: Request, res: Response, next: NextFunction) => {
-    await tenantController.getAll(req, res, next);
-  },
-);
+router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  await tenantController.getAll(req, res, next);
+});
 router.get(
   "/:id",
   authenticate,
