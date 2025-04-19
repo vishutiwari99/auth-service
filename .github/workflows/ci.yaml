@@ -42,7 +42,7 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: auth-service
+      IMAGE_NAME: vishutiwari99/auth-service
       IMAGE_TAG: build-${{ github.run_number }}
     if: github.ref =='refs/heads/main' && github.event_name == 'push'
     steps:
