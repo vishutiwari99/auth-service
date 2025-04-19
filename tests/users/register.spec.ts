@@ -161,8 +161,8 @@ describe("POST /auth/register", () => {
         (response.headers["set-cookie"] as Headers["set-cookie"]) || [];
       const cookies = Array.isArray(rawCookies) ? rawCookies : [rawCookies];
 
-      let accessToken = null;
-      let refreshToken = null;
+      let accessToken = "";
+      let refreshToken = "";
       cookies.forEach((cookie) => {
         if (cookie.startsWith("accessToken=")) {
           accessToken = cookie.split(";")[0].split("=")[1];
