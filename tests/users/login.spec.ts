@@ -4,6 +4,8 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import app from "../../src/app";
 import { Roles } from "../../src/contants";
+import { User } from "../../src/entity/User";
+import bcrypt from "bcrypt";
 
 describe("POST /users/login", () => {
   let connection: DataSource;
@@ -15,17 +17,21 @@ describe("POST /users/login", () => {
   beforeEach(async () => {
     await connection.dropDatabase();
     await connection.synchronize();
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash("password123", saltRounds);
     const userData = {
       firstName: "John",
       lastName: "Doe",
       email: "johndoe@example.com",
-      password: "password123",
+      password: hashedPassword,
       role: Roles.CUSTOMER,
       tenantId: 1,
     };
 
+    const userRepository = connection.getRepository(User);
+    await userRepository.save(userData);
+
     // Act
-    await request(app).post("/auth/register").send(userData);
   });
 
   afterAll(async () => {
