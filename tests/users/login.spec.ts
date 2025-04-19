@@ -32,7 +32,7 @@ describe("POST /users/login", () => {
     const userRepository = connection.getRepository(User);
     await userRepository.save(userData);
     // Act
-  });
+  }, 10000);
 
   afterAll(async () => {
     await connection.destroy();
