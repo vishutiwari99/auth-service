@@ -54,9 +54,9 @@ router.post(
 router.get(
   "/self",
   authenticate,
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      void authController.self(req as AuthRequest, res, next);
+      await authController.self(req as AuthRequest, res, next);
       // Ensure no value is returned here, just continue execution
     } catch (error) {
       next(error); // Pass the error to the next error handler
@@ -67,9 +67,9 @@ router.post(
   "/refresh",
   authenticate,
   validateRefreshToken,
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      void authController.refresh(req as AuthRequest, res, next);
+      await authController.refresh(req as AuthRequest, res, next);
       // Ensure no value is returned here, just continue execution
     } catch (error) {
       next(error); // Pass the error to the next error handler
@@ -80,9 +80,9 @@ router.post(
 router.post(
   "/logout",
   parseRefreshToken,
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      void authController.logout(req as AuthRequest, res, next);
+      await authController.logout(req as AuthRequest, res, next);
       // Ensure no value is returned here, just continue execution
     } catch (error) {
       next(error); // Pass the error to the next error handler

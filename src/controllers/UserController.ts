@@ -4,7 +4,7 @@ import { CreateUserRequest, UpdateUserRequest } from "../types";
 import { validationResult } from "express-validator";
 
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
   async create(req: CreateUserRequest, res: Response, next: NextFunction) {
     const error = validationResult(req);
     if (!error.isEmpty()) {

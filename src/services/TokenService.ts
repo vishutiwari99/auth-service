@@ -5,22 +5,20 @@ import { RefreshToken } from "../entity/RefreshToken";
 import { User } from "../entity/User";
 import { Repository } from "typeorm";
 export class TokenService {
-  constructor(private refreshtokenRepo: Repository<RefreshToken>) {}
+  constructor(private readonly refreshtokenRepo: Repository<RefreshToken>) {}
 
   generateAccessToken(payload: JwtPayload) {
-    let privateKey: string;
-
     if (!Config.PRIVATE_KEY) {
       const error = createHttpError(500, "SECRET KEY is not set");
       throw error;
     }
-    try {
-      privateKey = Config.PRIVATE_KEY;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    const privateKey = Config.PRIVATE_KEY;
+
+    if (!privateKey) {
       const error = createHttpError(500, "Error while reading private key");
       throw error;
     }
+
     const accessToken = sign(payload, privateKey, {
       algorithm: "RS256",
       expiresIn: "1h",
