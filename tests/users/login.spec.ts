@@ -13,6 +13,9 @@ describe("POST /users/login", () => {
   beforeAll(async () => {
     connection = await AppDataSource.initialize();
 
+    await connection.dropDatabase();
+    await connection.synchronize();
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash("password123", saltRounds);
     const userData = {
@@ -28,11 +31,11 @@ describe("POST /users/login", () => {
     await userRepository.save(userData);
   });
 
-  beforeEach(async () => {
-    await connection.dropDatabase();
-    await connection.synchronize();
-    // Act
-  });
+  // beforeEach(async () => {
+  //   await connection.dropDatabase();
+  //   await connection.synchronize();
+  //   // Act
+  // });
 
   afterAll(async () => {
     await connection.destroy();
