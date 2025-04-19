@@ -12,7 +12,9 @@ describe("POST /users/login", () => {
 
   beforeAll(async () => {
     connection = await AppDataSource.initialize();
+  });
 
+  beforeEach(async () => {
     await connection.dropDatabase();
     await connection.synchronize();
 
@@ -29,13 +31,8 @@ describe("POST /users/login", () => {
 
     const userRepository = connection.getRepository(User);
     await userRepository.save(userData);
+    // Act
   });
-
-  // beforeEach(async () => {
-  //   await connection.dropDatabase();
-  //   await connection.synchronize();
-  //   // Act
-  // });
 
   afterAll(async () => {
     await connection.destroy();
