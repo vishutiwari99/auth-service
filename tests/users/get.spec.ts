@@ -42,7 +42,7 @@ describe("GET /users", () => {
       const userRepository = connection.getRepository(User);
       await userRepository.save({
         ...userData,
-        role: Roles.ADMIN,
+        role: Roles.MANAGER,
       });
       //   generate token
 
@@ -51,6 +51,31 @@ describe("GET /users", () => {
         .set("Cookie", [`accessToken=${adminToken};`])
         .send();
       expect(response.body).toHaveLength(1);
+
+      expect(response.statusCode).toBe(200);
+    });
+    it("should return a single user by Id ", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        password: "password123",
+        tenantId: 1,
+      };
+      const userRepository = connection.getRepository(User);
+      const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+
+      await userRepository.save({
+        ...userData,
+        role: Roles.MANAGER,
+      });
+      //   generate token
+
+      const response = await request(app)
+        .get("/users/1")
+        .set("Cookie", [`accessToken=${adminToken};`])
+        .send();
+      expect(response.body).not.toBeNull();
 
       expect(response.statusCode).toBe(200);
     });
