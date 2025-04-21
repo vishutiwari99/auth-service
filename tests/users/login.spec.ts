@@ -5,7 +5,7 @@ import { AppDataSource } from "../../src/config/data-source";
 import app from "../../src/app";
 import { Roles } from "../../src/contants";
 import { User } from "../../src/entity/User";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 describe("POST /users/login", () => {
   let connection: DataSource;
