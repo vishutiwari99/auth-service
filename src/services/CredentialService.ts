@@ -1,4 +1,4 @@
-import brcypt from "bcrypt";
+import brcypt from "bcryptjs";
 export class CredentialService {
   async comparePassword(
     password: string,

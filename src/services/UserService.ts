@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import { User } from "../entity/User";
 import { UserData } from "../types";
 import createHttpError from "http-errors";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 export class UserService {
   constructor(private readonly userRepository: Repository<User>) {}
   async create({ firstName, lastName, email, password, role }: UserData) {
