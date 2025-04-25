@@ -12,7 +12,7 @@ export class TokenService {
       const error = createHttpError(500, "SECRET KEY is not set");
       throw error;
     }
-    const privateKey = Config.PRIVATE_KEY;
+    const privateKey = Config.PRIVATE_KEY.replace(/\\n/g, "\n");
 
     if (!privateKey) {
       const error = createHttpError(500, "Error while reading private key");
