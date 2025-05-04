@@ -8,6 +8,7 @@ import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import { userRegistrationValidationSchema } from "../validators/register-validator";
 import { UpdateUserRequest } from "../types";
+import listUserValidator from "../validators/list-user-validator";
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -28,6 +29,7 @@ router.get(
   "/",
   authenticate,
   canAccess([Roles.ADMIN]),
+  listUserValidator,
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.getAll(req, res, next);
   },

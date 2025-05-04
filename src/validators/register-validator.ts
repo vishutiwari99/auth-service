@@ -26,7 +26,7 @@ export const userRegistrationValidationSchema = checkSchema({
 
   tenantId: {
     errorMessage: "Tenant ID is required",
-    notEmpty: true,
+    notEmpty: false,
     trim: true,
   },
   role: {

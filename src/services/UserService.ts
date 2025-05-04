@@ -1,11 +1,18 @@
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { UserData } from "../types";
+import { UserData, UserQueryParams } from "../types";
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 export class UserService {
   constructor(private readonly userRepository: Repository<User>) {}
-  async create({ firstName, lastName, email, password, role }: UserData) {
+  async create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    tenantId,
+  }: UserData) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const existingUser = await this.userRepository.findOne({
@@ -22,6 +29,7 @@ export class UserService {
         email,
         password: hashedPassword,
         role: role,
+        tenant: tenantId ? { id: tenantId } : undefined,
       });
     } catch {
       const error = createHttpError(
@@ -41,12 +49,19 @@ export class UserService {
   async findById(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
+      relations: ["tenant"],
     });
     return user;
   }
 
-  async findAll() {
-    return await this.userRepository.find();
+  async findAll(validatedQuery: UserQueryParams) {
+    const querBuilder = this.userRepository.createQueryBuilder();
+    const result = await querBuilder
+      .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
+      .take(validatedQuery.perPage)
+      .getManyAndCount();
+    return result;
+    // return await this.userRepository.find();
   }
 
   async findAndUpdate(id: number, data: UserData) {

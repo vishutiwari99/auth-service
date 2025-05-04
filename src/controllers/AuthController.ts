@@ -23,7 +23,7 @@ export class AuthController {
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.array() });
     }
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role, tenantId } = req.body;
 
     this.logger.debug("New request to register user", {
       firstName,
@@ -38,7 +38,8 @@ export class AuthController {
         lastName,
         email,
         password,
-        role: Roles.CUSTOMER,
+        role: role.toLowerCase() ?? Roles.CUSTOMER,
+        tenantId: tenantId,
       });
 
       this.logger.info(`User ${user.id} created successfully`);
