@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { User } from "../entity/User";
 import { UserData, UserQueryParams } from "../types";
 import createHttpError from "http-errors";
@@ -55,11 +55,33 @@ export class UserService {
   }
 
   async findAll(validatedQuery: UserQueryParams) {
-    const querBuilder = this.userRepository.createQueryBuilder();
+    const querBuilder = this.userRepository.createQueryBuilder("user");
+    if (validatedQuery.q) {
+      const searchQuery = `%${validatedQuery.q}%`;
+      querBuilder.where(
+        new Brackets((qb) => {
+          qb.where(
+            "CONCAT(user.firstName, ' ', user.lastName) ILike :searchQuery",
+            {
+              searchQuery,
+            },
+          ).orWhere("user.email ILike :searchQuery", {
+            searchQuery,
+          });
+        }),
+      );
+    }
+    if (validatedQuery.role) {
+      querBuilder.andWhere("user.role = :role", {
+        role: validatedQuery.role,
+      });
+    }
     const result = await querBuilder
       .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
       .take(validatedQuery.perPage)
+      .orderBy("user.createdAt", "DESC")
       .getManyAndCount();
+
     return result;
     // return await this.userRepository.find();
   }
