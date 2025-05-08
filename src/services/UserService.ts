@@ -77,6 +77,7 @@ export class UserService {
       });
     }
     const result = await querBuilder
+      .leftJoinAndSelect("user.tenant", "tenant")
       .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
       .take(validatedQuery.perPage)
       .orderBy("user.createdAt", "DESC")
