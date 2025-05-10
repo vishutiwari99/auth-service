@@ -1,5 +1,5 @@
-import { Repository } from "typeorm";
-import { ITenant } from "../types";
+import { Brackets, Repository } from "typeorm";
+import { ITenant, TenantQueryParams } from "../types";
 import { Tenant } from "../entity/Tenant";
 
 export class TenantService {
@@ -8,8 +8,26 @@ export class TenantService {
     return await this.tenantRepository.save(tenant);
   }
 
-  async getAllTenants() {
-    return await this.tenantRepository.find();
+  async getAllTenants(validatedQuery: TenantQueryParams) {
+    const querBuilder = this.tenantRepository.createQueryBuilder("tenant");
+    if (validatedQuery.q) {
+      const searchQuery = `%${validatedQuery.q}%`;
+      querBuilder.where(
+        new Brackets((qb) => {
+          qb.where(
+            "CONCAT(tenant.name, ' ', tenant.address) ILike :searchQuery",
+            {
+              searchQuery,
+            },
+          );
+        }),
+      );
+    }
+
+    const result = await querBuilder
+      .orderBy("tenant.createdAt", "DESC")
+      .getManyAndCount();
+    return result;
   }
 
   async getOneById(id: number) {

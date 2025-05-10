@@ -8,6 +8,7 @@ import authenticate from "../middlewares/authenticate";
 import { canAccess } from "../middlewares/canAccess";
 import { Roles } from "../contants";
 import { tenantsValidator } from "../validators/tenants-validator";
+import listTenantValidator from "../validators/list-tenant-validator";
 
 const router = express.Router();
 const tenantRepository = AppDataSource.getRepository(Tenant);
@@ -25,9 +26,15 @@ router.post(
     await tenantController.create(req, res, next);
   },
 );
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  await tenantController.getAll(req, res, next);
-});
+router.get(
+  "/",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  listTenantValidator,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await tenantController.getAll(req, res, next);
+  },
+);
 router.get(
   "/:id",
   authenticate,

@@ -39,7 +39,7 @@ export class AuthController {
         email,
         password,
         role: role.toLowerCase() ?? Roles.CUSTOMER,
-        tenantId: tenantId,
+        tenantId: role.toLowerCase() === Roles.MANAGER ? tenantId : undefined,
       });
 
       this.logger.info(`User ${user.id} created successfully`);
