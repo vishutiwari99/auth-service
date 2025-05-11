@@ -1,6 +1,6 @@
 import { Brackets, Repository } from "typeorm";
 import { User } from "../entity/User";
-import { UserData, UserQueryParams } from "../types";
+import { LimitedUserData, UserData, UserQueryParams } from "../types";
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 export class UserService {
@@ -87,8 +87,19 @@ export class UserService {
     // return await this.userRepository.find();
   }
 
-  async findAndUpdate(id: number, data: UserData) {
-    return this.userRepository.update(id, data);
+  async findAndUpdate(id: number, userData: LimitedUserData) {
+    const { email, firstName, lastName, role, tenantId } = userData;
+
+    const user = await this.userRepository.update(id, {
+      email,
+      firstName,
+      lastName,
+      role,
+      tenant: tenantId ? { id: tenantId } : undefined,
+    });
+
+    return user;
+    // return this.userRepository.update(id, data);
   }
 
   async findAndDelete(id: number) {
