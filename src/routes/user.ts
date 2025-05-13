@@ -9,6 +9,7 @@ import { User } from "../entity/User";
 import { userRegistrationValidationSchema } from "../validators/register-validator";
 import { UpdateUserRequest } from "../types";
 import listUserValidator from "../validators/list-user-validator";
+import { userUpdateValidationSchema } from "../validators/update-user-validator";
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -48,6 +49,7 @@ router.patch(
   "/:id",
   authenticate,
   canAccess([Roles.ADMIN]),
+  userUpdateValidationSchema,
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.update(req as UpdateUserRequest, res, next);
   },

@@ -1,6 +1,7 @@
 import { checkSchema } from "express-validator";
+import { UpdateUserRequest } from "../types";
 
-export const userRegistrationValidationSchema = checkSchema({
+export const userUpdateValidationSchema = checkSchema({
   firstName: {
     errorMessage: "First name is required",
     notEmpty: true,
@@ -17,16 +18,20 @@ export const userRegistrationValidationSchema = checkSchema({
     trim: true,
     isEmail: true,
   },
-  password: {
-    isLength: {
-      options: { min: 8 },
-      errorMessage: "Password should be at least 8 chars",
-    },
-  },
+
   tenantId: {
     errorMessage: "Tenant ID is required",
-    notEmpty: true,
     trim: true,
+    custom: {
+      options: (value: string, { req }) => {
+        const role = (req as UpdateUserRequest).body.role;
+        if (role === "admin" && value !== "admin") {
+          return true;
+        } else {
+          return !!value;
+        }
+      },
+    },
   },
   role: {
     errorMessage: "Role is required",

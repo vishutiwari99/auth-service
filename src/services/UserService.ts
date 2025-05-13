@@ -29,7 +29,7 @@ export class UserService {
         email,
         password: hashedPassword,
         role: role,
-        tenant: tenantId ? { id: tenantId } : undefined,
+        tenant: tenantId ? { id: tenantId } : null,
       });
     } catch {
       const error = createHttpError(
@@ -95,7 +95,7 @@ export class UserService {
       firstName,
       lastName,
       role,
-      tenant: tenantId ? { id: tenantId } : undefined,
+      tenant: tenantId ? { id: tenantId } : null,
     });
 
     return user;

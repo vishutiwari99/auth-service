@@ -62,6 +62,10 @@ export class UserController {
   }
 
   async update(req: UpdateUserRequest, res: Response, next: NextFunction) {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return next(createHttpError(400, error.array()[0].msg as string));
+    }
     try {
       const user = await this.userService.findAndUpdate(
         Number(req.params.id),
