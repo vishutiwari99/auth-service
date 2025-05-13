@@ -6,13 +6,14 @@ import {
   UserQueryParams,
 } from "../types";
 import { matchedData, validationResult } from "express-validator";
+import createHttpError from "http-errors";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
   async create(req: CreateUserRequest, res: Response, next: NextFunction) {
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      return res.status(400).json({ errors: error.array() });
+      return next(createHttpError(400, error.array()[0].msg as string));
     }
 
     const { firstName, lastName, email, password, tenantId, role } = req.body;
