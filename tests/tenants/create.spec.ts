@@ -142,7 +142,8 @@ describe("POST /tenants", () => {
     const response = await request(app)
       .get("/tenants")
       .set("Cookie", [`accessToken=${adminToken}`]);
-    expect(response.body).toHaveLength(2);
+
+    expect(response.body.data).toHaveLength(2);
     expect(response.statusCode).toBe(200);
 
     const tenants = await tenantRepository.find();

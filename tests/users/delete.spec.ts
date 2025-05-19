@@ -63,7 +63,8 @@ describe("DELETE /users/id", () => {
       // const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
 
       const userRepository = connection.getRepository(User);
-      await userRepository.save({
+
+      const user = await userRepository.save({
         ...userData,
         role: Roles.ADMIN,
       });

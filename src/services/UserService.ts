@@ -23,7 +23,7 @@ export class UserService {
       throw error;
     }
     try {
-      return await this.userRepository.save({
+      const user = await this.userRepository.save({
         firstName,
         lastName,
         email,
@@ -31,6 +31,7 @@ export class UserService {
         role: role,
         tenant: tenantId ? { id: tenantId } : null,
       });
+      return user;
     } catch {
       const error = createHttpError(
         400,

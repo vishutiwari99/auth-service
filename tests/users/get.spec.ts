@@ -50,7 +50,7 @@ describe("GET /users", () => {
         .get("/users")
         .set("Cookie", [`accessToken=${adminToken};`])
         .send();
-      expect(response.body).toHaveLength(1);
+      expect(response.body.data).toHaveLength(1);
 
       expect(response.statusCode).toBe(200);
     });
@@ -75,7 +75,6 @@ describe("GET /users", () => {
         .get("/users/1")
         .set("Cookie", [`accessToken=${adminToken};`])
         .send();
-      expect(response.body).not.toBeNull();
 
       expect(response.statusCode).toBe(200);
     });

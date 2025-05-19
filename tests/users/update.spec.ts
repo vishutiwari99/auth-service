@@ -50,6 +50,7 @@ describe("PATCH /users/:id", () => {
         lastName: "Tiwari",
         email: "johndoe@example.com",
         password: "password123",
+        role: Roles.ADMIN,
       };
       //   generate token
 

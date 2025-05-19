@@ -136,7 +136,7 @@ describe("POST /auth/self", () => {
         .get("/users")
         .set("Cookie", [`accessToken=${adminToken};`])
         .send();
-      expect(response.body).toHaveLength(1);
+      expect(response.body.data).toHaveLength(1);
 
       expect(response.statusCode).toBe(200);
     });

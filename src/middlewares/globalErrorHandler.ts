@@ -11,21 +11,29 @@ export const globalErrorHandler = (
   _next: NextFunction,
 ) => {
   const errorId = uuidv4();
-  const statusCode = err.statusCode || 500;
+  const isUnauthorized = err.name === "UnauthorizedError";
+  const isHttp = err instanceof HttpError;
+
+  const statusCode = isUnauthorized ? 401 : isHttp ? err.statusCode : 500;
   const isProduction = process.env.NODE_ENV === "production";
-  const message = isProduction ? "Internal Server Error" : err.message;
-  logger.error(err.message, {
+  const message = isProduction
+    ? isUnauthorized
+      ? "Unauthorized"
+      : "Internal Server Error"
+    : err.message || "Unexpected error";
+
+  logger[isUnauthorized ? "warn" : "error"](message, {
     id: errorId,
-    error: err.stack,
+    stack: err.stack,
     path: req.path,
     method: req.method,
-    statusCode: statusCode,
+    statusCode,
   });
   res.status(statusCode).json({
     errors: [
       {
         ref: errorId,
-        type: err.name,
+        type: err.name || "Error",
         msg: message,
         path: req.path,
         method: req.method,

@@ -58,6 +58,12 @@ describe("POST /users", () => {
     });
     it("should create a manager user", async () => {
       const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+      const tenentData = {
+        name: "Test Tenant",
+        address: "Test Address",
+      };
+      const tenantRepository = connection.getRepository(Tenant);
+      await tenantRepository.save(tenentData);
 
       const userData = {
         firstName: "John",
