@@ -47,6 +47,20 @@ describe("Get /tenants", () => {
     const tenants = await tenantRepository.find();
     expect(tenants).toHaveLength(2);
   });
+  it("should return tenants with matching query", async () => {
+    const mockTenants: ITenant[] = [
+      { name: "Tenant 1", address: "Address 1" },
+      { name: "Tenant 2", address: "Address 2" },
+    ];
+    adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
+    const tenantRepository = connection.getRepository(Tenant);
+    await tenantRepository.save(mockTenants);
+    const response = await request(app)
+      .get("/tenants?q=Tenant 1")
+      .set("Cookie", [`accessToken=${adminToken}`]);
+    console.log(response.body.data);
+    expect(response.body.data).toHaveLength(1);
+  });
 
   it("should return a single tenant by id", async () => {
     const mockTenants: ITenant[] = [
