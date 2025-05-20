@@ -1,36 +1,14 @@
+// validators/userQueryValidator.ts
+
 import { checkSchema } from "express-validator";
+import { baseQuerySchema } from "./commonQuerySchema";
 
 export default checkSchema(
   {
+    ...baseQuerySchema(),
     role: {
       customSanitizer: {
-        options: (value: string) => {
-          return value ?? "";
-        },
-      },
-    },
-    q: {
-      trim: true,
-      customSanitizer: {
-        options: (value: string) => {
-          return value ?? "";
-        },
-      },
-    },
-    currentPage: {
-      customSanitizer: {
-        options: (value: string) => {
-          const parsedValue = Number(value);
-          return Number.isNaN(parsedValue) ? 1 : parsedValue;
-        },
-      },
-    },
-    perPage: {
-      customSanitizer: {
-        options: (value: string) => {
-          const parsedValue = Number(value);
-          return Number.isNaN(parsedValue) ? 6 : parsedValue;
-        },
+        options: (value: string) => value ?? "",
       },
     },
   },

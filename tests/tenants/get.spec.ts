@@ -58,7 +58,6 @@ describe("Get /tenants", () => {
     const response = await request(app)
       .get("/tenants?q=Tenant 1")
       .set("Cookie", [`accessToken=${adminToken}`]);
-    console.log(response.body.data);
     expect(response.body.data).toHaveLength(1);
   });
 
